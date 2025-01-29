@@ -85,3 +85,70 @@ exports.submitQuiz = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.editQuiz = async (req, res) => {
+  const {
+    question,
+    options,
+    correct_answer,
+    level,
+    category,
+    description,
+    hint,
+    image,
+    time_limit,
+    tags,
+    difficulty_score,
+    is_active,
+    attempt_count,
+    success_rate,
+    explanation_video,
+    author,
+    language,
+    randomize_options
+  } = req.body;
+
+  try {
+    // Find quiz by ID and update it
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      req.body._id,
+      {
+        question,
+        options,
+        correct_answer,
+        level,
+        category,
+        description,
+        hint,
+        image,
+        time_limit,
+        tags,
+        difficulty_score,
+        is_active,
+        attempt_count,
+        success_rate,
+        explanation_video,
+        author,
+        language,
+        randomize_options
+      },
+      { new: true }
+    );
+
+    // Send success response with the updated quiz data
+    res.json({ message: "Quiz updated successfully", quiz: updatedQuiz });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteQuiz = async (req, res) => {
+  try {
+    // Find quiz by ID and delete it
+    await Quiz.findByIdAndDelete(req.params.id);
+    res.json({ message: "Quiz deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
