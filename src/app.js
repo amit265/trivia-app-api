@@ -6,18 +6,25 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(cors()); // Allow requests from frontend
-
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.error("❌ MongoDB Connection Error:", err));
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // Define Quiz Schema
 const QuizSchema = new mongoose.Schema({
   question: String,
   options: [String],
   answer: String,
-}); 
+});
 
 const Quiz = mongoose.model("Quiz", QuizSchema);
 
@@ -36,7 +43,9 @@ app.post("/quiz", async (req, res) => {
 // Start Server (Only for Local Testing)
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  app.listen(PORT, () =>
+    console.log(`🚀 Server running on http://localhost:${PORT}`)
+  );
 }
 
 // Export for Vercel
