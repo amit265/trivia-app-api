@@ -17,5 +17,5 @@ module.exports = async (req, res, next) => {
     next(); // Proceed to the next middleware or route handler
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
-  }
+  } 
 };
