@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const quizRoutes = require("./routes/quizRoutes");
 const leaderboardRoutes = require("./routes/leaderboardRoutes");
 const connectDB = require("./config/db");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+
 
 // Routes
 app.use("/api/auth", authRoutes);
