@@ -1,44 +1,27 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+const dotenv = require("dotenv");
+const authRoutes = require("./routes/authRoutes");
+const quizRoutes = require("./routes/quizRoutes");
+const leaderboardRoutes = require("./routes/leaderboardRoutes");
+const connectDB = require("./config/db");
+
+dotenv.config();
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
+
+// Middleware
+app.use(cors());
 app.use(express.json());
-app.use(cors()); // Allow requests from frontend
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "User-Agent"],
-  })
-);
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// Define Quiz Schema
-const QuizSchema = new mongoose.Schema({
-  question: String,
-  options: [String],
-  answer: String,
-});
-
-const Quiz = mongoose.model("Quiz", QuizSchema);
-
-// API Routes
-app.get("/quiz", async (req, res) => {
-  const quizzes = await Quiz.find();
-  res.json(quizzes);
-});
-
-app.post("/quiz", async (req, res) => {
-  const quiz = new Quiz(req.body);
-  await quiz.save();
-  res.json({ message: "✅ Quiz added successfully!" });
-});
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/quiz", quizRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 // Start Server (Only for Local Testing)
 if (process.env.NODE_ENV !== "production") {
@@ -47,6 +30,6 @@ if (process.env.NODE_ENV !== "production") {
     console.log(`🚀 Server running on http://localhost:${PORT}`)
   );
 }
-
+ 
 // Export for Vercel
 module.exports = app;
